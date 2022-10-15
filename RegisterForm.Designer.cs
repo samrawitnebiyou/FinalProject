@@ -297,6 +297,10 @@
         private System.Windows.Forms.Button btn_signup;
         private System.Windows.Forms.Label lbl_already;
         private System.Windows.Forms.Button btn_clickhere;
+        private System.Windows.Forms.ErrorProvider errorProvider1;
+        private System.Windows.Forms.ErrorProvider errorProvider2;
+        private System.Windows.Forms.ErrorProvider errorProvider3;
+        private System.Windows.Forms.ErrorProvider errorProvider4;
     }
 }
 
