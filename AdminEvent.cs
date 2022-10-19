@@ -85,6 +85,9 @@ namespace Stadium
             DatabaseLayer db = new DatabaseLayer();
             Event ev = new Event(int.Parse(txt_eventid.Text), txt_eventname.Text, dateTimePicker1.Text, txt_eventtime.Text);
             db.UpdateEvent(ev);
+            txt_eventid.Clear();
+            txt_eventname.Clear();
+            txt_eventtime.Clear();
 
         }
 
@@ -111,6 +114,10 @@ namespace Stadium
             DatabaseLayer db = new DatabaseLayer();
             Event ev = new Event(int.Parse(txt_eventid.Text));
             db.DeleteEvent(ev);
+            txt_eventid.Clear();
+            txt_eventname.Clear();
+            txt_eventtime.Clear();
+            
         }
     }
 }
