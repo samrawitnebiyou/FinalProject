@@ -72,4 +72,15 @@ begin
 Update tblEvent set name=@name, eventdate=@eventdate,eventtime=@eventtime
 where eventid = @eventid
 end
+
+go
+create proc [dbo].[spDeleteEvent]
+@eventid int
+as 
+begin
+update tblTicket set event=null where event=@eventid
+delete from tblEvent
+where eventid = @eventid
+end
+go
 -----
