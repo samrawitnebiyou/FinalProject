@@ -32,3 +32,44 @@ end
 go
  select * from tblUser
  ----------------
+ create table tblEvent
+(
+eventid int primary key identity(1000,1),
+name varchar(30) not null,
+eventdate varchar(30) not null,
+eventtime varchar(30) not null
+)
+
+go
+alter proc [dbo].[spInsertEvent]
+@name varchar(50),
+@eventdate varchar(30),
+@eventtime varchar(30)
+as 
+begin
+
+insert into tblEvent(name,eventdate,eventtime) 
+values (@name,@eventdate,@eventtime)
+end
+
+go
+alter proc [dbo].[spDisplayEvent]
+as 
+begin
+select * from tblEvent
+end 
+go
+
+
+go
+create proc [dbo].[spUpdateEvent]
+@eventid int,
+@name varchar(50),
+@eventdate varchar(30),
+@eventtime varchar(30)
+as 
+begin
+Update tblEvent set name=@name, eventdate=@eventdate,eventtime=@eventtime
+where eventid = @eventid
+end
+-----
