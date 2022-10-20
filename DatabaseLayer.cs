@@ -42,5 +42,179 @@ namespace Stadium
                 MessageBox.Show(ex.Message);
             }
         }
+          public string getRole(string un, string pwd)
+        {
+            string role = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spGetRole", con);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@userName", un);
+                    cmd.Parameters.AddWithValue("@password", pwd);
+                    object objRole = cmd.ExecuteScalar();
+                    con.Close();
+                    if (objRole != null)
+                        role = objRole.ToString();
+                    else
+                        role = "No Role";
+
+                    return role;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return "ERROR";
+            }
+        }
+        public void InsertEvent(Event e)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spInsertEvent", con);
+                    cmd.CommandType = System.Data.CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@name", e.name);
+                    cmd.Parameters.AddWithValue("@eventdate", e.date);
+                    cmd.Parameters.AddWithValue("@eventtime", e.time);
+
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Event Saved Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public DataTable DisplayEventByName(string name)
+        {
+            using (SqlConnection con = new SqlConnection(path))
+            {
+                con.Open();
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+
+                    da.SelectCommand = new SqlCommand("spGetEventbyName", con);
+                    da.SelectCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.AddWithValue("@eventName", name);
+                    DataSet ds = new DataSet();
+                    da.Fill(ds, "dtEvent");
+
+                    DataTable dt = ds.Tables["dtEvent"];
+                    return dt;
+
+                }
+            }
+        }
+        public DataTable DisplayEventByID(string id)
+        {
+            using (SqlConnection con = new SqlConnection(path))
+            {
+                con.Open();
+                using (SqlDataAdapter da = new SqlDataAdapter())
+                {
+
+                    da.SelectCommand = new SqlCommand("spGetEventbyID", con);
+                    da.SelectCommand.CommandType = System.Data.CommandType.StoredProcedure;
+                    da.SelectCommand.Parameters.AddWithValue("@eventid", id);
+                    DataSet ds = new DataSet();
+                    da.Fill(ds, "dtEvent");
+
+                    DataTable dt = ds.Tables["dtEvent"];
+                    return dt;
+
+                }
+            }
+
+        }
+        public DataTable DisplayEvent()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDisplayEvent", con);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+
+                    da.Fill(ds, "dtEvent");
+                    DataTable dt = ds.Tables["dtEvent"];
+                    return dt;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public void UpdateEvent(Event e)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spUpdateEvent", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@eventid", e.id);
+                    cmd.Parameters.AddWithValue("@name", e.name);
+                    cmd.Parameters.AddWithValue("@eventdate", e.date);
+                    cmd.Parameters.AddWithValue("@eventtime", e.time);
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Event Updated Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void DeleteEvent(Event e)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDeleteEvent", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@eventid", e.id);
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Event Deleted Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
