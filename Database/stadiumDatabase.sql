@@ -115,3 +115,84 @@ select * from tblEvent
 where eventid = @eventID 
 end
 go
+
+------
+--table for tickets
+create table tblTicket
+(
+ticketid int primary key identity(100,1),
+tickettype varchar(30) not null,
+amount money,
+event int
+)
+
+alter table tblTicket
+add constraint fk_ev
+foreign key (event) references tblEvent(eventid)
+
+--sp to insert ticket for an event
+go
+alter proc [dbo].[spInsertTicket]
+@tickettype varchar(30),
+@amount varchar(30),
+@event varchar(30)
+as 
+begin
+declare @eventno int
+select @eventno= e.eventid from tblEvent as e where name=@event
+insert into tblTicket(tickettype,amount,event) 
+values (@tickettype,@amount,@eventno)
+end
+
+--sp to display all tickets
+go
+create proc [dbo].[spDisplayTicket]
+as 
+begin
+select ticketid,tickettype,amount,name from tblTicket as t
+join tblEvent as e
+on t.event=e.eventid
+where ticketid not in (select ticket from tblReservation)
+end
+
+--sp to update ticket
+go
+alter proc [dbo].[spUpdateTicket]
+@ticketid int,
+@tickettype varchar(30),
+@amount varchar(30),
+@event varchar(30)
+as 
+begin
+declare @eventno int
+select @eventno = event from tblticket as t
+join tblEvent as e
+on t.event=e.eventid
+where name=@event
+Update tblTicket set tickettype=@tickettype, amount=@amount,event=@eventno
+where ticketid = @ticketid
+end
+
+--sp to delete ticket
+go
+alter proc [dbo].[spDeleteTicket]
+@ticketid int
+as 
+begin
+update tblTicket set event=null where ticketid=@ticketid
+delete from tblTicket
+where ticketid = @ticketid
+end
+select * from tblTicket
+
+--sp to search ticket by type
+go
+alter proc [dbo].[TicketbyType]
+@tickettype varchar(30)
+as
+begin
+select ticketid,tickettype,amount,name from tblTicket as t
+join tblEvent as e
+on t.event=e.eventid
+where tickettype=@tickettype
+end
