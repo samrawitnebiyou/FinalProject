@@ -216,5 +216,141 @@ namespace Stadium
                 MessageBox.Show(ex.Message);
             }
         }
+
+        public void InsertTicket(Ticket t)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spInsertTicket", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    cmd.Parameters.AddWithValue("@tickettype", t.tickettype);
+                    cmd.Parameters.AddWithValue("@amount", t.amount);
+                    cmd.Parameters.AddWithValue("@event", t.eventname);
+
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Ticket Saved Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public DataTable TicketbyType(string name)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+
+
+                    using (SqlDataAdapter da = new SqlDataAdapter())
+                    {
+                        da.SelectCommand = new SqlCommand("TicketbyType", con);
+                        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                        da.SelectCommand.Parameters.AddWithValue("@tickettype", name);
+                        DataSet ds = new DataSet();
+                        da.Fill(ds, "dtTicket");
+
+                        DataTable dt = ds.Tables["dtTicket"];
+                        return dt;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+
+
+        }
+        public DataTable DisplayTicket()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDisplayTicket", con);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public void UpdateTicket(Ticket t)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spUpdateTicket", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ticketid", t.ticketid);
+                    cmd.Parameters.AddWithValue("@tickettype", t.tickettype);
+                    cmd.Parameters.AddWithValue("@amount", t.amount);
+                    cmd.Parameters.AddWithValue("@event", t.eventname);
+
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Ticket updated Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public void DeleteTicket(Ticket t)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDeleteTicket", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@ticketid", t.ticketid);
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Ticket Deleted Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
     }
 }
