@@ -14,6 +14,15 @@ role varchar(30)
 )
 
 go
+ alter procedure [dbo].[spGetRole]
+@userName varchar(50),
+@password varchar(50)
+as
+select role from tblUser
+where userName =@userName and password=@password
+go
+
+go
 alter proc [dbo].[spCreateUser]
 @id varchar(50),
 @firstName varchar(50),
@@ -84,3 +93,25 @@ where eventid = @eventid
 end
 go
 -----
+go
+create proc [dbo].[spGetEventbyName]
+@eventName varchar(30)
+as 
+begin
+select *from tblEvent 
+where name like @eventName+'%' 
+end
+go
+
+
+
+
+go
+create proc [dbo].[spGetEventbyID]
+@eventID int
+as 
+begin
+select * from tblEvent 
+where eventid = @eventID 
+end
+go
