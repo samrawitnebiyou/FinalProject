@@ -53,12 +53,26 @@ namespace Stadium
 
         private void btn_members_Click(object sender, EventArgs e)
         {
-
+            AdminCustomer ac = new AdminCustomer();
+            ac.TopLevel = false;
+            ac.Dock = DockStyle.Fill;
+            this.panel3.Controls.Add(ac);
+            lbl_title_text.Text = ac.Text;
+            ac.BringToFront();
+            ac.Show();
         }
 
         private void pbox_admin_Click(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            LoginForm lf = new LoginForm();
+            
+            lf.Show();
+            this.Close();
         }
     }
 }

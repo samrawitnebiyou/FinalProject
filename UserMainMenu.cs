@@ -27,5 +27,49 @@ namespace Stadium
             home.BringToFront();
             home.Show();
         }
+
+        private void btn_event_Click(object sender, EventArgs e)
+        {
+            UserEvent ue = new UserEvent();
+            ue.TopLevel = false;
+            ue.Dock = DockStyle.Fill;
+            this.panel3.Controls.Add(ue);
+            lbl_title_text.Text = ue.Text;
+            ue.BringToFront();
+            ue.Show();
+        }
+
+        private void btn_reservation_Click(object sender, EventArgs e)
+        {
+
+            UserReservation ue = new UserReservation();
+            ue.TopLevel = false;
+            ue.Dock = DockStyle.Fill;
+            this.panel3.Controls.Add(ue);
+            lbl_title_text.Text = ue.Text;
+            ue.BringToFront();
+            ue.Show();
+        }
+
+        private void btn_back_Click(object sender, EventArgs e)
+        {
+            LoginForm lf = new LoginForm();
+
+            lf.Show();
+            this.Close();
+
+        }
+
+        private void btn_aboutus_Click(object sender, EventArgs e)
+        {
+            AboutUs au = new AboutUs();
+            au.TopLevel = false;
+            au.Dock = DockStyle.Fill;
+            this.panel3.Controls.Add(au);
+            lbl_title_text.Text = au.Text;
+            au.BringToFront();
+            au.Show();
+
+        }
     }
 }
