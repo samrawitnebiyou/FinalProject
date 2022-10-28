@@ -196,3 +196,211 @@ join tblEvent as e
 on t.event=e.eventid
 where tickettype=@tickettype
 end
+---
+--sp to display all users
+go
+create proc [dbo].[AllUsers]
+as
+begin
+select count(id)from tblUser
+where role ='User'
+end
+ 
+ --sp to display all admins
+go
+create proc [dbo].[AllAdminstrator]
+as
+begin
+select count(id)from tblUser
+where role ='Adminstrator'
+end
+
+--sp to display users for specific event
+go
+create proc [dbo].[UserByEvent]
+@eventName varchar(30)
+as 
+begin
+select count(users) from tblReservation as r
+join tblTicket as t
+on r.ticket=t.ticketid
+join tblEvent as e
+on t.event=e.eventid
+where e.name=@eventName
+end
+
+
+--table for reservation
+
+create table tblReservation
+(
+resid int primary key identity(1000,1),
+resdate varchar(30) not null,
+restime varchar(30) not null,
+numberofreservation int,
+users int,
+ticket int,
+)
+
+alter table tblReservation
+add constraint fk_cu
+foreign key (users) references tblUser(id) 
+
+alter table tblReservation
+add constraint fk_ti
+foreign key (ticket) references tblTicket(ticketid)
+
+--sp for inserting into tblReservation and updating seat
+
+go 
+alter proc [insertReserandUpdateSeat]
+@resdatee varchar(30),
+@restimee varchar(30),
+@userr varchar(30),
+@tickett int,
+@seatNumber int
+--@seatType varchar(30)
+as
+begin
+declare @identityval int, @userss int, @seatType varchar(30)
+select @userss= u.id from tblUser as u where u.userName=@userr
+insert into tblReservation (resdate,restime,numberofreservation,users,ticket)
+values (@resdatee,@restimee,1,@userss,@tickett)
+
+set @identityval= SCOPE_IDENTITY()
+select @seatType= seattype from tblSeat where seatnumber=@seatNumber
+update tblSeat set reservation=@identityVal
+where seatnumber=@seatNumber
+end
+
+
+--sp for displaying all reservation
+
+
+
+--sp for searching user reservation
+go
+alter proc[dbo].[spDisplayUserreservation]
+@userID varchar(30)
+as
+begin
+select r.resid, r.resdate, r.restime,r.numberofreservation,userName ,t.ticketid,t.amount,t.tickettype ,e.name,s.seatnumber,s.seattype from tblReservation as r
+join tblUser as u 
+on r.users= u.id
+join tblTicket as t
+on r.ticket=t.ticketid
+join tblEvent as e
+on t.event=e.eventid
+join tblSeat as s
+on r.resid=s.reservation
+where u.id=@userID
+end
+
+
+--sp for update reservation
+
+go
+alter proc [dbo].[spupdateReser]
+@resid int,
+@resdate varchar(30),
+@restime varchar(30),
+@user varchar(30),
+@ticket int
+as 
+begin
+declare @users int,@identityval int,@seatType varchar(30)
+select @users= users from tblReservation as r
+join tblUser as u
+on r.users=u.id
+where username=@user
+update tblReservation set resdate=@resdate,restime=@restime,users=@users,ticket=@ticket
+where resid=@resid
+end
+
+--sp for deleteing reservation
+go
+alter proc [dbo].[spDeleteReservation]
+@resid int
+as 
+begin
+update tblSeat set reservation=null where reservation=@resid
+delete from tblReservation
+where resid = @resid
+end
+go
+--
+
+--table for seat
+
+create table tblSeat
+(
+seatnumber int primary key ,
+seattype varchar(30) not null,
+reservation int
+)
+
+
+alter table tblSeat
+add constraint fk_re
+foreign key (reservation) references tblReservation(resid)
+
+
+--inserting seats 
+insert into tblSeat values
+
+(1,'VIP',null),(2,'REGULAR',null),
+(3,'VIP',null),(4,'REGULAR',null),
+(5,'VIP',null),(6,'REGULAR',null),
+(7,'VIP',null),(8,'VIP',null),
+(9,'VIP',null),(10,'VIP',null),
+(11,'REGULAR',null),(12,'REGULAR',null),
+(13,'REGULAR',null),(14,'REGULAR',null)
+
+--sp to display seats available
+go
+alter proc [dbo].[spDisplaySeat]
+as 
+begin
+select seatnumber,seattype,reservation from tblSeat as s
+where s.reservation is null
+end
+
+--
+ select * from tblReservation
+ select * from tblSeat
+ select * from tblUser
+ 
+ --Triggers
+ --1
+ go
+alter trigger [checkpasswordamount]
+on tblUser
+after insert
+as
+begin
+declare @password varchar(30)
+select @password= password from tblUser
+if(LEN(@password)>16)
+  begin
+ raiserror('password too long',16,1)
+ rollback
+ end
+ end
+insert into tblUser values('Oumer','Muktar','oumerm@gmail.com','oumer0989','samrawit0982314678',null,'Adminstrator')
+
+
+  /*--2 is not working
+--go
+--alter trigger [checkemail]
+--on tblUser
+--after insert
+--as
+--begin
+--if exists(select  email from tblUser)
+--  begin
+-- raiserror('Email already registered',16,1)
+rollback
+ end
+ end*/
+
+ -----------
