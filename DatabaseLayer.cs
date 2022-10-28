@@ -352,5 +352,298 @@ namespace Stadium
                 MessageBox.Show(ex.Message);
             }
         }
+        public string AllUsers()
+        {
+            string count = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("AllUsers", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    object objCount = cmd.ExecuteScalar();
+                    con.Close();
+                    if (objCount != null)
+                        count = objCount.ToString();
+                    else
+                        count = "No user";
+
+                    return count;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return "error";
+            }
+        }
+        public string AllAdminstrator()
+        {
+            string count = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("AllAdminstrator", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    object objCount = cmd.ExecuteScalar();
+                    con.Close();
+                    if (objCount != null)
+                        count = objCount.ToString();
+                    else
+                        count = "No user";
+
+                    return count;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return "error";
+            }
+        }
+        public string UsersbyEvent(string name)
+        {
+            string count = "";
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("UserbyEvent", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@eventName", name);
+                    object objCount = cmd.ExecuteScalar();
+                    con.Close();
+                    if (objCount != null)
+                        count = objCount.ToString();
+                    else
+                        count = "No user";
+
+                    return count;
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return "error";
+            }
+        }
+
+        public DataTable DisplaySeat()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDisplaySeat", con);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public DataTable DisplayUserreservation(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+
+
+                    using (SqlDataAdapter da = new SqlDataAdapter())
+                    {
+                        da.SelectCommand = new SqlCommand("spDisplayUserreservation", con);
+                        da.SelectCommand.CommandType = CommandType.StoredProcedure;
+                        da.SelectCommand.Parameters.AddWithValue("@userID", id);
+                        DataSet ds = new DataSet();
+                        da.Fill(ds, "dtReservation");
+
+                        DataTable dt = ds.Tables["dtReservation"];
+                        return dt;
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+
+
+        }
+
+        public void InsertReservationUpdateSeat(Reservation r, int seatno)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("insertReserandUpdateSeat", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@resdatee", r.resDate);
+                    cmd.Parameters.AddWithValue("@restimee", r.resTime);
+                    cmd.Parameters.AddWithValue("@userr", r.user);
+                    cmd.Parameters.AddWithValue("@tickett", r.ticket);
+                    // cmd.Parameters.AddWithValue("@seatType", s.seatType);
+                    cmd.Parameters.AddWithValue("@seatNumber", seatno);
+
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Reservation Successful !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public DataTable DisplayReservation()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDisplayReservation", con);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataTable dt = new DataTable();
+                    da.Fill(dt);
+                    return dt;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public void DeleteReservation(Reservation r)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spDeleteReservation", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@resid", r.resid);
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Reservation Deleted Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+
+        public void UpdateReservation(Reservation r)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("spupdateReser", con);
+                    cmd.CommandType = CommandType.StoredProcedure;
+                    cmd.Parameters.AddWithValue("@resid", r.resid);
+                    cmd.Parameters.AddWithValue("@resdate", r.resDate);
+                    cmd.Parameters.AddWithValue("@restime", r.resTime);
+                    cmd.Parameters.AddWithValue("@user", r.user);
+                    cmd.Parameters.AddWithValue("@ticket", r.ticket);
+                    //cmd.Parameters.AddWithValue("@seatNumber", seatno);
+                    //cmd.Parameters.AddWithValue("@seaType", seatno);
+
+
+                    int row = cmd.ExecuteNonQuery();
+                    con.Close();
+                    if (row > 0)
+                    {
+                        MessageBox.Show("Reservation Updated Successfully !");
+                    }
+                }
+
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+        }
+        public DataTable DisplayAllEvents()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("Select * from DisplayAllEvents()", con);
+                    SqlDataAdapter da = new SqlDataAdapter(cmd);
+                    DataSet ds = new DataSet();
+
+                    da.Fill(ds, "dtEvent");
+                    DataTable dt = ds.Tables["dtEvent"];
+                    return dt;
+
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return null;
+            }
+        }
+        public int CountEvents()
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("select * from usdAllEvents()", con);
+                    object count = cmd.ExecuteScalar();
+
+                    return int.Parse(count.ToString());
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+        }
+
+    }
+}
+
     }
 }
