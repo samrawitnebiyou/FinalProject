@@ -641,6 +641,68 @@ namespace Stadium
                 return 0;
             }
         }
+        public int daysLeft(string name)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("select  dbo.calculatesEventDate ('" + name + "')", con);
+                    object count = cmd.ExecuteScalar();
+
+                    return int.Parse(count.ToString());
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+        }
+        public int ticketLeft(int id)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("select  dbo.TicketsLeftforEvent ('" + id + "')", con);
+                    object count = cmd.ExecuteScalar();
+
+                    return int.Parse(count.ToString());
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+
+        }
+        public int numberofSeats(string name)
+        {
+            try
+            {
+                using (SqlConnection con = new SqlConnection(path))
+                {
+                    con.Open();
+                    SqlCommand cmd = new SqlCommand("select  dbo.udfSeatsbyEvent ('" + name + "')", con);
+                    object count = cmd.ExecuteScalar();
+
+                    return int.Parse(count.ToString());
+
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+                return 0;
+            }
+
+        }
 
     }
 }
