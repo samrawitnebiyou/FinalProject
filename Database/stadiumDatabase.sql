@@ -404,3 +404,100 @@ rollback
  end*/
 
  -----------
+ select * from tblUser
+--3
+ go
+alter trigger [checkclashdate]
+on tblEvent
+after insert
+as
+begin
+if exists(select  eventdate,eventtime from tblEvent)
+  begin
+ raiserror('event date and event time clashes',16,1)
+ rollback
+ end
+ end
+
+ select * from tblEvent
+ insert into tblEvent values ('clash date','Wednesday, October 26, 2022','12:09PM')
+
+ --4
+ go
+alter trigger [ReservationGreaterthan10000]
+on tblReservation
+after insert
+as
+begin
+declare @count int
+select @count=count(numberofreservation) from tblReservation
+if @count>10000
+begin
+ raiserror('All Tickets are soled out',16,1)
+ rollback
+ end
+end
+
+--5
+go
+alter trigger [checkinsertname]
+on tblUser
+after insert
+as
+begin
+declare @fullname varchar(30)
+select @fullname= firstname  from tblUser
+
+if(@fullname=null or @fullname='')
+  begin
+ raiserror('name not entered',11,1)
+ rollback
+ end
+ end
+
+ insert into tblUser values('Oumer','Muktar','mhw@gmail.com','muk98','jdjsj23',null,'User')
+ select * from tblUser
+
+ --functions
+
+--1
+go
+create function [DisplayAllEvents]()
+returns table
+as 
+return(select  * from tblEvent)
+go
+select * from DisplayAllEvents()
+
+--2
+ go
+create function [usdAllEvents]()
+returns table
+as 
+return(select  count(eventid) as AllEvents from tblEvent)
+go
+select * from usdAllEvents()
+
+--3
+/*go
+alter function [calculatesEventDate]
+(@eventName varchar(30))
+returns int
+as
+begin
+declare @daysleft int
+select @daysleft=datediff(day,e.eventdate,getdate())  from tblEvent as e
+where e.name=@eventName
+
+return @daysleft
+end
+go
+select  dbo.calculatesEventDate ('super Bowl')
+select * from tblEvent
+*/
+
+select * from tblUser
+ select * from tblEvent
+ select * from tblTicket
+select * from tblReservation
+ select * from tblSeat
