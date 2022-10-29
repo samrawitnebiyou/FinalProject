@@ -501,3 +501,18 @@ select * from tblUser
  select * from tblTicket
 select * from tblReservation
  select * from tblSeat
+ ---
+ --2 
+go
+create trigger [checkamount]
+on tblTicket
+after insert
+as
+begin
+declare @amountt money
+select @amountt= amount from tblTicket
+if(@amountt < 0 )
+  begin
+ raiserror('invalid amount ',16,1)
+ rollback
+ end
